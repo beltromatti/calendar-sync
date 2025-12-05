@@ -1,0 +1,40 @@
+{
+  "name": "calendar-sync",
+  "version": "1.0.0",
+  "description": "Bi-directional Apple CalDAV <-> Google Calendar sync daemon, PM2-ready.",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "node --max-old-space-size=2048 ./node_modules/typescript/bin/tsc",
+    "start": "node dist/index.js",
+    "dev": "tsx src/index.ts",
+    "test": "node --max-old-space-size=2048 ./node_modules/vitest/vitest.mjs run"
+  },
+  "keywords": [
+    "calendar",
+    "sync",
+    "google-calendar",
+    "apple-calendar",
+    "caldav",
+    "pm2"
+  ],
+  "author": "",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "dotenv": "^17.2.3",
+    "googleapis": "^167.0.0",
+    "ical.js": "^2.2.1",
+    "pino": "^10.1.0",
+    "tsdav": "^2.1.6"
+  },
+  "devDependencies": {
+    "@types/node": "^24.10.1",
+    "ts-node": "^10.9.2",
+    "tsconfig-paths": "^4.2.0",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3",
+    "vitest": "^3.2.4"
+  }
+}
