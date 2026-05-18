@@ -16,9 +16,9 @@ export function parseIcsToEvents(
     const sourceUpdated = component.getFirstPropertyValue('x-src-updated') as string | undefined;
     const syncHash = component.getFirstPropertyValue('x-sync-hash') as string | undefined;
     const uid = sourceUid || event.uid;
-    const start = event.startDate.toJSDate();
-    const end = event.endDate.toJSDate();
     const allDay = event.startDate.isDate;
+    const start = allDay ? dateOnlyToUtcDate(event.startDate) : event.startDate.toJSDate();
+    const end = allDay ? dateOnlyToUtcDate(event.endDate) : event.endDate.toJSDate();
     const lastModifiedProp = component.getFirstPropertyValue('last-modified') as ICAL.Time | undefined;
     const lastModifiedFromProp = lastModifiedProp ? lastModifiedProp.toJSDate() : undefined;
     const lastModified = sourceUpdated ? new Date(sourceUpdated) : lastModifiedFromProp || new Date();
@@ -65,12 +65,8 @@ export function eventToICS(event: CalendarEvent): string {
   icalEvent.summary = event.title;
   icalEvent.description = event.description || '';
   icalEvent.location = event.location || '';
-  const startTime = ICAL.Time.fromJSDate(event.start);
-  const endTime = ICAL.Time.fromJSDate(event.end);
-  if (event.allDay) {
-    startTime.isDate = true;
-    endTime.isDate = true;
-  }
+  const startTime = event.allDay ? utcDateToDateOnlyTime(event.start) : ICAL.Time.fromJSDate(event.start);
+  const endTime = event.allDay ? utcDateToDateOnlyTime(event.end) : ICAL.Time.fromJSDate(event.end);
   icalEvent.startDate = startTime;
   icalEvent.endDate = endTime;
   const lm = event.lastModified || new Date();
@@ -89,4 +85,15 @@ export function eventToICS(event: CalendarEvent): string {
 
   vcalendar.addSubcomponent(vevent);
   return vcalendar.toString();
+}
+
+function dateOnlyToUtcDate(time: ICAL.Time): Date {
+  return new Date(Date.UTC(time.year, time.month - 1, time.day));
+}
+
+function utcDateToDateOnlyTime(date: Date): ICAL.Time {
+  const year = date.getUTCFullYear();
+  const month = String(date.getUTCMonth() + 1).padStart(2, '0');
+  const day = String(date.getUTCDate()).padStart(2, '0');
+  return ICAL.Time.fromDateString(`${year}-${month}-${day}`);
 }

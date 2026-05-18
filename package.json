@@ -17,7 +17,7 @@
     "caldav",
     "pm2"
   ],
-  "author": "",
+  "author": "Mattia Beltrami",
   "license": "MIT",
   "engines": {
     "node": ">=18"
